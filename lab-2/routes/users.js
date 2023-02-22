@@ -3,7 +3,9 @@ const express = require('express');
 const router = express.Router();
 const data = require('../data');
 const userData = data.users;
-
+const redis = require('redis');
+const client = redis.createClient();
+client.connect().then(() => { });
 
 router
     .route('/signup')
@@ -62,9 +64,17 @@ router
                 if (!(a === null)) {
                     const now = new Date();
                     const expiresAt = new Date();
-                    expiresAt.setHours(expiresAt.getHours() + 1);
+                    expiresAt.setHours(expiresAt.getHours() + 2);
                     req.session.username = a.username;
                     req.session._id = a._id;
+                    sessionUser = {
+                        username: a.username.toString(),
+                        _id: a._id.toString()
+                    }
+                    let sessionExists = await client.exists('session');
+                    if (!sessionExists) {
+                        await client.set('session', JSON.stringify(sessionUser));
+                    }
                     res.cookie('AuthCookie', now.toString(), { expires: expiresAt });
                     // req.session.username = username;
                     return res.status(200).json(a);
@@ -87,8 +97,12 @@ router
     .get(async (req, res) => {
         try {
             if (req.session.username) {
+                let sessionExists = await client.exists('session');
+                if (sessionExists) {
+                    await client.del('session')
+                }
                 const anHourAgo = new Date();
-                anHourAgo.setHours(anHourAgo.getHours() - 1);
+                anHourAgo.setHours(anHourAgo.getHours() - 2);
                 res.cookie('AuthCookie', '', { expires: anHourAgo });
                 res.clearCookie('AuthCookie');
                 res.status(200).json('User has been logged out');

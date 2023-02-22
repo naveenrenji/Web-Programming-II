@@ -53,15 +53,19 @@ const checkSteps = (steps) => {
 
 const checkCookingSkillRequired = (cookingSkillRequired) => {
   //Validating cookingSkillRequired
+  cookingSkillRequired=cookingSkillRequired.toLowerCase();
   if (!cookingSkillRequired) throw 'You must provide a cookingSkillRequired';
   if (typeof cookingSkillRequired !== 'string') throw 'cookingSkillRequired must be a string';
   if (cookingSkillRequired.trim().length === 0)
     throw 'cookingSkillRequired cannot be an empty string or string with just spaces';
-  let skills = ['novice', 'intermediate', 'advanced', 'Novice', 'Intermediate', 'Advanced'];
+  let skills = ['novice', 'intermediate', 'advanced'];
   cookingSkillRequired = cookingSkillRequired.trim();
   let res = skills.indexOf(cookingSkillRequired);
   if (res === -1) throw 'You must provide valid cookingSkillRequired';
-  return cookingSkillRequired.toLowerCase();
+  if(res===0) cookingSkillRequired='Novice';
+  else if (res===1) cookingSkillRequired='Intermediate';
+  else if (res===2) cookingSkillRequired='Advanced';
+  return cookingSkillRequired;
 };
 
 

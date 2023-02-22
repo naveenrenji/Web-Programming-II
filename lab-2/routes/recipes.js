@@ -7,6 +7,21 @@ const redis = require('redis');
 const client = redis.createClient();
 client.connect().then(() => { });
 
+const delPages = async () => {
+    let pageNumbersExists = await client.exists('pageNumbers');
+    let pageNumbers;
+    if (pageNumbersExists === 0) {
+        return;
+    }
+    else {
+        pageNumbers = await client.get('pageNumbers');
+        pageNumbers = JSON.parse(pageNumbers);
+    }
+    for (let i = 0; i < pageNumbers.length; i++) {
+        await client.del(`page-${pageNumbers[i]}`);
+    }
+    await client.del('pageNumbers');
+};
 
 router
     .route('/')
@@ -48,6 +63,7 @@ router
                 steps = helpers.checkSteps(steps);
                 const newRecipe = await recipesData.createRecipe(req.session._id, req.session.username, title, ingredients, cookingSkillRequired, steps);
                 await client.set(newRecipe._id.toString(), JSON.stringify(newRecipe));
+                await delPages();
                 let a = await client.zIncrBy('recipe-access-count', 1, newRecipe._id.toString());
                 return res.status(200).json(newRecipe);
             } catch (e) {
@@ -63,17 +79,26 @@ router.route('/:id/likes')
     .post(async (req, res) => {
         if (req.session.username) {
             try {
-                const id = req.params.id;
+                const id = helpers.checkId(req.params.id, 'recipeID');
                 const updatedRecipeInfo = await recipesData.likeRecipe(id, req.session._id);
                 let recipeExists = await client.exists(updatedRecipeInfo._id.toString());
                 if (recipeExists) {
                     await client.set(updatedRecipeInfo._id.toString(), JSON.stringify(updatedRecipeInfo));
+                    await delPages();
                     let a = await client.zIncrBy('recipe-access-count', 1, updatedRecipeInfo._id.toString());
                 }
                 return res.status(200).json(updatedRecipeInfo);
             }
             catch (e) {
-                return res.status(500).json({ error: e });
+                if (e === 'Error: recipeID invalid object ID') {
+                    return res.status(400).json({ error: e });
+                }
+                if (e === 'No recipe with that id') {
+                    return res.status(404).json({ error: e });
+                }
+                else {
+                    return res.status(500).json({ error: e });
+                }
             }
         }
         else {
@@ -94,6 +119,7 @@ router.route('/:id/comments')
                 let recipeExists = await client.exists(updatedRecipeInfo._id.toString());
                 if (recipeExists) {
                     await client.set(updatedRecipeInfo._id.toString(), JSON.stringify(updatedRecipeInfo));
+                    await delPages();
                     let a = await client.zIncrBy('recipe-access-count', 1, updatedRecipeInfo._id.toString());
                 }
                 return res.status(200).json(updatedRecipeInfo);
@@ -119,6 +145,7 @@ router.route('/:recipeId/:commentId')
                     let recipeExists = await client.exists(updatedRecipeInfo._id.toString());
                     if (recipeExists) {
                         await client.set(updatedRecipeInfo._id.toString(), JSON.stringify(updatedRecipeInfo));
+                        await delPages();
                         let a = await client.zIncrBy('recipe-access-count', 1, updatedRecipeInfo._id.toString());
                     }
                 }
@@ -167,6 +194,7 @@ router.route('/:id')
                 let recipeExists = await client.exists(updatedRecipeInfo._id.toString());
                 if (recipeExists) {
                     await client.set(updatedRecipeInfo._id.toString(), JSON.stringify(updatedRecipeInfo));
+                    await delPages();
                     let a = await client.zIncrBy('recipe-access-count', 1, updatedRecipeInfo._id.toString());
                 }
                 res.status(200).json(updatedRecipeInfo);

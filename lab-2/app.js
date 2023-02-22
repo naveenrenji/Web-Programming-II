@@ -1,15 +1,35 @@
 const express = require('express');
 const app = express();
 const configRoutes = require('./routes');
-const session = require('express-session');
 const cookieParser = require('cookie-parser');
-const redis = require('redis');
-const client = redis.createClient();
-client.connect().then(() => { });
+const session = require('express-session');
 
 app.use(cookieParser());
 app.use(express.json());
 
+const redis = require('redis');
+//Configure redis client
+const redisClient = redis.createClient();
+redisClient.connect().then(() => { });
+
+// const connectRedis = require('connect-redis');
+// var bodyParser = require('body-parser');
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+//const RedisStore = connectRedis(session)
+
+// //Configure session middleware
+// app.use(session({
+//     store: new RedisStore({ client: redisClient }),
+//     secret: 'secret$%^134',
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//         secure: false, // if true only transmit cookie over https
+//         httpOnly: false, // if true prevent client side JS from reading the cookie 
+//         maxAge: 1000 * 60 * 10 // session max age in miliseconds
+//     }
+// }))
 
 //middlewares
 app.use(
@@ -23,8 +43,25 @@ app.use(
 );
 
 app.use(async (req, res, next) => {
+  // if(req.session.username){
+  //   next();
+  // }
+  if (req.session.username === undefined) {
+    let sessionExists = await redisClient.exists('session');
+    if (sessionExists) {
+      let sessionUser = await redisClient.get('session');
+      sessionUser = JSON.parse(sessionUser);
+      req.session.username = sessionUser.username;
+      req.session._id = sessionUser._id;
+    }
+  }
+  next();
+
+})
+
+app.use(async (req, res, next) => {
   const { url, method, body } = req;
-  let exists = await client.exists('naveens_girlfriend');
+  let exists = await redisClient.exists('naveens_girlfriend');
   if (exists) {
     console.log('It is a miracle');
   }
@@ -50,12 +87,12 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/recipes', async(req, res, next) => {
-  if(req.method === "GET" ){
+app.use('/recipes', async (req, res, next) => {
+  if (req.method === "GET") {
     let page = req.query.page;
-    let pageExists = await client.exists(`page-${page}`);
-    if(pageExists){
-      let recipeList = await client.get(`page-${page}`);
+    let pageExists = await redisClient.exists(`page-${page}`);
+    if (pageExists) {
+      let recipeList = await redisClient.get(`page-${page}`);
       return res.status(200).json(JSON.parse(recipeList));
     }
   }
@@ -93,10 +130,10 @@ app.use('/recipes/:recipeId', async (req, res, next) => {
   if (req.method === 'GET') {
     let id = req.params.recipeId;
     id = id.toString();
-    let recipeExists = await client.exists(id);
+    let recipeExists = await redisClient.exists(id);
     if (recipeExists) {
-      let recipe = await client.get(id);
-      let a = await client.zIncrBy('recipe-access-count', 1, id);
+      let recipe = await redisClient.get(id);
+      let a = await redisClient.zIncrBy('recipe-access-count', 1, id);
       return res.status(200).json(JSON.parse(recipe));
     }
     else {
@@ -115,24 +152,3 @@ app.listen(3000, () => {
   console.log("We've now got a server!");
   console.log('Your routes will be running on http://localhost:3000');
 });
-
-// const recipes = require('./data/recipes');
-// const users = require('./data/users');
-// const connection = require('./config/mongoConnection');
-
-// const main = async ()=> {
-// try{
-//     await connection.dbConnection();
-//     let a= await users.loginUser('nrenji1','Naveen@123');
-
-//     // let a= await recipes.addCommentToRecipe('63d222099ad17c20d4e616cb','hahaha boo');
-//     //let a = await recipes.getRecipeById('63d2177d6dc9b3a91cf29223');
-//     //let a = await recipes.createRecipe("Fried Chicken", ["One whole chicken", "2 cups of flour", "2 eggs", "salt", "pepper", "1 cup cooking oil"], "Novice", ["First take the two eggs and mix them with the flour, the salt and the pepper", "Next, dip the chicken into the mix", "take 1 cup of oil and put in frier", "Fry the chicken on medium heat for 1 hour","serve and eat happily"]);
-//     console.log(a);
-// }
-// catch(e){
-//     console.log(e);
-// }
-// }
-
-// main()

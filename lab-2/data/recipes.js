@@ -72,6 +72,19 @@ const getAllRecipes = async (page) => {
       cookingSkillRequired: recipeItem.cookingSkillRequired
     })
   });
+  let pageNumbersExists = await client.exists('pageNumbers');
+  let pageNumbers;
+  if(pageNumbersExists===0){
+    pageNumbers=[];
+  }
+  else{
+    pageNumbers = await client.get('pageNumbers');
+    pageNumbers = JSON.parse(pageNumbers);
+  }
+  if(!(pageNumbers.includes(page))){
+    pageNumbers.push(page);
+    await client.set('pageNumbers',JSON.stringify(pageNumbers));
+  }
   await client.set(`page-${page}`, JSON.stringify(recipeItems));
   return recipeItems;
 };
@@ -238,7 +251,7 @@ const likeRecipe = async (recipeId, userId) => {
   userId = helpers.checkId(userId);
   recipe = await getRecipeById(recipeId);
   if (!recipe) {
-    throw 'no recipe with that id';
+    throw 'No recipe with that id';
   }
   let likeExists = false;
   recipe.likes.forEach(likeId => {
@@ -261,7 +274,7 @@ const likeRecipe = async (recipeId, userId) => {
         throw 'Could not remove like from recipe';
     }
     else {
-      throw 'Could not find it, check recipeID'
+      throw 'No recipe with that id'
     }
     return await getRecipeById(recipeId);
   }
