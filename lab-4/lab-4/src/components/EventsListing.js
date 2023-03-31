@@ -10,13 +10,26 @@ import {
   Typography,
 } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
+import { styled } from "@mui/system";
+import Search from "./Search";
+import noImage from "../img/download.jpeg";
 
-const APIKEY = "mWzS1KYw6kPb4fA0KJBqNXDAF0hUqI6A";
+const APIKEY = "e127Ifc0YAMBpVEonI4wblzsVmDm7LhC";
+
+const StyledTitle = styled("h1")({
+  fontFamily: "Montserrat, sans-serif",
+  fontWeight: 800,
+  fontSize: "3rem",
+  color: "#1e8678",
+  marginBottom: "2rem",
+  textAlign: "center",
+});
 
 const buildCard = (event) => {
   return (
     <Grid item xs={12} sm={4} md={4} lg={3} xl={3} key={event.id}>
       <Card
+        key={event.id}
         variant="outlined"
         sx={{
           maxWidth: 250,
@@ -27,6 +40,12 @@ const buildCard = (event) => {
           border: "1px solid #1e8678",
           boxShadow:
             "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
+          transition: "transform 0.3s ease-out",
+          "&:hover": {
+            transform: "scale(1.03)",
+            boxShadow: "0 8px 15px rgba(0, 0, 0, 0.3)",
+            borderColor: "#1e8678",
+          },
         }}
       >
         <CardActionArea>
@@ -37,7 +56,11 @@ const buildCard = (event) => {
                 width: "100%",
               }}
               component="img"
-              image={event.images[0].url}
+              image={
+                event.images && event.images[0].url
+                  ? event.images[0].url
+                  : noImage
+              }
               title={event.name}
             />
 
@@ -66,6 +89,17 @@ const buildCard = (event) => {
               <Typography variant="body2" color="textSecondary" component="p">
                 Start Date - {event.dates.start.localDate}
               </Typography>
+              {event._embedded && event._embedded.venues ? (
+                <Typography variant="body2" color="textSecondary" component="p">
+                  Venues - {event._embedded.venues[0].name}
+                  <br />
+                  {event._embedded.venues[0].city.name}
+                </Typography>
+              ) : (
+                <Typography variant="body2" color="textSecondary" component="p">
+                  Venue Not Available
+                </Typography>
+              )}
             </CardContent>
           </Link>
         </CardActionArea>
@@ -75,8 +109,8 @@ const buildCard = (event) => {
 };
 
 const EventsListing = () => {
+  const [searchTerm, setSearchTerm] = useState("");
   const [events, setEvents] = useState([]);
-  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [showsEOD, setShowsEOD] = useState(false);
   const [showsWrongPage, setShowsWrongPage] = useState(false);
@@ -99,80 +133,114 @@ const EventsListing = () => {
     seturlPage(1);
   };
 
+  const searchValue = async (value) => {
+    setSearchTerm(value);
+  };
+
+  useEffect(() => {
+    console.log("search useEffect fired");
+    async function fetchData() {
+      try {
+        console.log(`in fetch searchTerm: ${searchTerm}`);
+        const { data } = await axios.get(
+          `https://app.ticketmaster.com/discovery/v2/events.json?size=1&apikey=${APIKEY}&keyword=${searchTerm}`
+        );
+        setEvents(data._embedded.events);
+        setLoading(false);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    if (searchTerm.trim().length > 0) {
+      fetchData();
+    }
+  }, [searchTerm]);
+
   useEffect(() => {
     console.log(`on load useEffect for page ${urlPage}`);
     setShowsEOD(false);
     setShowsWrongPage(false);
+    const nextURL = `/events/page/${urlPage}`;
+    const nextTitle = "Events page";
+    const nextState = { additionalInformation: "Updated the URL with JS" };
+    window.history.pushState(nextState, nextTitle, nextURL);
     const fetchEvents = async () => {
       try {
-        const nextURL = `/events/page/${urlPage}`;
-        const nextTitle = "Events page";
-        const nextState = { additionalInformation: "Updated the URL with JS" };
-        window.history.pushState(nextState, nextTitle, nextURL);
         const response = await axios.get(
           `https://app.ticketmaster.com/discovery/v2/events`,
           {
             params: {
               apikey: APIKEY,
               countryCode: "US",
-              page: urlPage,
+              page: urlPage - 1,
             },
           }
         );
-        // try {
-        //   await axios.get(`https://app.ticketmaster.com/discovery/v2/events`, {
-        //     params: {
-        //       apikey: APIKEY,
-        //       countryCode: "US",
-        //       page: parseInt(urlPage) + 1,
-        //     },
-        //   });
-        // } catch (e) {
-        //   if (e.code === "ERR_BAD_REQUEST") {
-        //     setShowsEOD(true);
-        //     setLoading(false);
-        //   }
-        // }
         setShowsFirstPage(parseInt(urlPage) === 1);
-        console.log("Got data");
         setEvents(response.data._embedded.events);
-        setTotalPages(response.data.page.totalPages);
-        console.log(`URL number = ${urlPage}`);
-        console.log(`total pages = ${totalPages}`);
         setLoading(false);
       } catch (e) {
-        console.log("end of data");
-        setShowsWrongPage(true);
-        setLoading(false);
+        if (e.code === "ERR_NETWORK") {
+          setShowsWrongPage(false);
+          setLoading(false);
+        } else {
+          setShowsWrongPage(true);
+          setLoading(false);
+        }
       }
     };
+    if (urlPage - 1 === 49) {
+      fetchEvents();
+      setShowsEOD(true);
+      setLoading(false);
+    } else {
+      if (searchTerm.trim().length === 0) {
+        fetchEvents();
+      }
+    }
+  }, [urlPage, searchTerm]);
 
-    fetchEvents();
-  }, [urlPage]);
-
-  if (loading) {
+  if (searchTerm) {
+    return (
+      <div>
+        <StyledTitle>
+          <h2>Events Listing</h2>
+        </StyledTitle>
+        <Search searchValue={searchValue} />
+        <br></br>
+        {events.map((event) => buildCard(event))}
+        <br></br>
+      </div>
+    );
+  } else if (loading) {
     return (
       <div>
         <h2>Loading....</h2>
       </div>
     );
-  } else if (showsWrongPage) {
-    return (
-      <div>
-        <h1>404, Page not found!</h1>
-        <br />
-        <br />
-        <Button className="showlink" onClick={FirstPage}>
-          Go to First Page
-        </Button>
-        <br />
-        <br />
-      </div>
-    );
+  } else if (showsWrongPage || events.length === 0) {
+    if (!loading) {
+      return (
+        <div>
+          <h1>404, No Events Found!</h1>
+          <br />
+          <br />
+          <Button className="showlink" onClick={FirstPage}>
+            Go to First Page
+          </Button>
+          <br />
+          <br />
+        </div>
+      );
+    }
   } else {
     return (
       <div>
-        <h2>Events Listing</h2>
+        <StyledTitle>
+          <h2>Events Listing</h2>
+        </StyledTitle>
+        <Search searchValue={searchValue} />
+        <br></br>
         <div>
           {!showsFirstPage && (
             <Button className="showlink" onClick={handlePrevPage}>

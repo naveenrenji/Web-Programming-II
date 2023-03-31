@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import {
   Button,
@@ -8,8 +8,17 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
-const APIKEY = "mWzS1KYw6kPb4fA0KJBqNXDAF0hUqI6A";
+import { styled } from "@mui/system";
 
+const APIKEY = "e127Ifc0YAMBpVEonI4wblzsVmDm7LhC";
+const StyledTitle = styled("h1")({
+  fontFamily: "Montserrat, sans-serif",
+  fontWeight: 800,
+  fontSize: "3rem",
+  color: "#1e8678",
+  marginBottom: "2rem",
+  textAlign: "center",
+});
 const buttonStyle = {
   borderBottom: "1px solid #1e8678",
   fontWeight: "bold",
@@ -77,69 +86,73 @@ const buildAttraction = (attractionData) => {
           {attractionData.name}
         </Typography>
         <br></br>
-        {attractionData.classifications[0].genre && (
+        {attractionData.classifications[0] && (
           <>
-            <Typography
-              sx={infoStyle}
-              variant="body2"
-              color="textSecondary"
-              component="p"
-            >
-              Genre - {attractionData.classifications[0].genre.name}
-            </Typography>
-            <br></br>
-          </>
-        )}
-                {attractionData.classifications[0].subGenre && (
-          <>
-            <Typography
-              sx={infoStyle}
-              variant="body2"
-              color="textSecondary"
-              component="p"
-            >
-              subGenre - {attractionData.classifications[0].subGenre.name}
-            </Typography>
-            <br></br>
-          </>
-        )}
-        {attractionData.classifications[0].segment && (
-          <>
-            <Typography
-              sx={infoStyle}
-              variant="body2"
-              color="textSecondary"
-              component="p"
-            >
-              Segment - {attractionData.classifications[0].segment.name}
-            </Typography>
-            <br></br>
-          </>
-        )}
-        {attractionData.classifications[0].subType && (
-          <>
-            <Typography
-              sx={infoStyle}
-              variant="body2"
-              color="textSecondary"
-              component="p"
-            >
-              Subtype - {attractionData.classifications[0].subType.name}
-            </Typography>
-            <br></br>
-          </>
-        )}
-        {attractionData.classifications[0].type && (
-          <>
-            <Typography
-              sx={infoStyle}
-              variant="body2"
-              color="textSecondary"
-              component="p"
-            >
-              Type - {attractionData.classifications[0].type.name}
-            </Typography>
-            <br></br>
+            {attractionData.classifications[0].genre && (
+              <>
+                <Typography
+                  sx={infoStyle}
+                  variant="body2"
+                  color="textSecondary"
+                  component="p"
+                >
+                  Genre - {attractionData.classifications[0].genre.name}
+                </Typography>
+                <br></br>
+              </>
+            )}
+            {attractionData.classifications[0].subGenre && (
+              <>
+                <Typography
+                  sx={infoStyle}
+                  variant="body2"
+                  color="textSecondary"
+                  component="p"
+                >
+                  subGenre - {attractionData.classifications[0].subGenre.name}
+                </Typography>
+                <br></br>
+              </>
+            )}
+            {attractionData.classifications[0].segment && (
+              <>
+                <Typography
+                  sx={infoStyle}
+                  variant="body2"
+                  color="textSecondary"
+                  component="p"
+                >
+                  Segment - {attractionData.classifications[0].segment.name}
+                </Typography>
+                <br></br>
+              </>
+            )}
+            {attractionData.classifications[0].subType && (
+              <>
+                <Typography
+                  sx={infoStyle}
+                  variant="body2"
+                  color="textSecondary"
+                  component="p"
+                >
+                  Subtype - {attractionData.classifications[0].subType.name}
+                </Typography>
+                <br></br>
+              </>
+            )}
+            {attractionData.classifications[0].type && (
+              <>
+                <Typography
+                  sx={infoStyle}
+                  variant="body2"
+                  color="textSecondary"
+                  component="p"
+                >
+                  Type - {attractionData.classifications[0].type.name}
+                </Typography>
+                <br></br>
+              </>
+            )}
           </>
         )}
         {attractionData.externalLinks && (
@@ -238,7 +251,7 @@ const AttractionDetails = () => {
     const fetchAttraction = async () => {
       try {
         const response = await axios.get(
-          `https://app.ticketmaster.com/discovery/v2/attractions/${id}.json?apikey=mWzS1KYw6kPb4fA0KJBqNXDAF0hUqI6A`
+          `https://app.ticketmaster.com/discovery/v2/attractions/${id}.json?apikey=${APIKEY}`
         );
         console.log("Got data");
         setAttraction(response.data);
@@ -257,20 +270,24 @@ const AttractionDetails = () => {
         <h2>Loading....</h2>
       </div>
     );
-  } else if (showsWrongPage) {
-    return (
-      <div>
-        <h1>404, Page not found!</h1>
-        <br />
-        <Button variant="contained" href={`/attractions/page/1`}>
-          Back to all Attractions
-        </Button>
-      </div>
-    );
+  } else if (showsWrongPage || attraction.length === 0) {
+    if (!loading) {
+      return (
+        <div>
+          <h1>404, Page not found!</h1>
+          <br />
+          <Button variant="contained" href={`/attractions/page/1`}>
+            Back to all Attractions
+          </Button>
+        </div>
+      );
+    }
   } else {
     return (
       <div>
-        <h2>Attraction Details</h2>
+        <StyledTitle>
+          <h2>Attraction Details</h2>
+        </StyledTitle>
         {buildAttraction(attraction)}
         <br></br>
       </div>

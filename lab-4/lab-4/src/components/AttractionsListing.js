@@ -10,8 +10,20 @@ import {
   Typography,
 } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
+import Search from "./Search";
+import noImage from "../img/download.jpeg";
+import { styled } from "@mui/system";
 
-const APIKEY = "mWzS1KYw6kPb4fA0KJBqNXDAF0hUqI6A";
+const APIKEY = "e127Ifc0YAMBpVEonI4wblzsVmDm7LhC";
+
+const StyledTitle = styled("h1")({
+  fontFamily: "Montserrat, sans-serif",
+  fontWeight: 800,
+  fontSize: "3rem",
+  color: "#1e8678",
+  marginBottom: "2rem",
+  textAlign: "center",
+});
 
 const buildCard = (attraction) => {
   return (
@@ -27,6 +39,12 @@ const buildCard = (attraction) => {
           border: "1px solid #1e8678",
           boxShadow:
             "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
+          transition: "transform 0.3s ease-out",
+          "&:hover": {
+            transform: "scale(1.03)",
+            boxShadow: "0 8px 15px rgba(0, 0, 0, 0.3)",
+            borderColor: "#1e8678",
+          },
         }}
       >
         <CardActionArea>
@@ -37,7 +55,11 @@ const buildCard = (attraction) => {
                 width: "100%",
               }}
               component="img"
-              image={attraction.images[0].url}
+              image={
+                attraction.images && attraction.images[0].url
+                  ? attraction.images[0].url
+                  : noImage
+              }
               title={attraction.name}
             />
 
@@ -53,14 +75,16 @@ const buildCard = (attraction) => {
               >
                 {attraction.name}
               </Typography>
-              {attraction.upcomingEvents.ticketmaster && (
+              {attraction.upcomingEvents &&
+              attraction.upcomingEvents.ticketmaster ? (
                 <Typography variant="body2" color="textSecondary" component="p">
-                  Upcoming Events - {attraction.upcomingEvents.ticketmaster}
+                  `{attraction.upcomingEvents.ticketmaster} upcoming events on
+                  Ticketmaster`
+                  <br />
                 </Typography>
-              )}
-              {!attraction.upcomingEvents.ticketmaster && (
+              ) : (
                 <Typography variant="body2" color="textSecondary" component="p">
-                  Upcoming Events - None
+                  No upcoming events on Ticketmaster{" "}
                 </Typography>
               )}
             </CardContent>
@@ -72,8 +96,8 @@ const buildCard = (attraction) => {
 };
 
 const AttractionsListing = () => {
+  const [searchTerm, setSearchTerm] = useState("");
   const [attractions, setAttractions] = useState([]);
-  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [showsEOD, setShowsEOD] = useState(false);
   const [showsWrongPage, setShowsWrongPage] = useState(false);
@@ -92,14 +116,40 @@ const AttractionsListing = () => {
     }
   };
 
+  const searchValue = async (value) => {
+    setSearchTerm(value);
+  };
+
   const FirstPage = () => {
     seturlPage(1);
   };
 
   useEffect(() => {
-    console.log(`on load useEffect for page ${urlPage}`);
+    console.log("search useEffect fired");
+    async function fetchData() {
+      try {
+        console.log(`in fetch searchTerm: ${searchTerm}`);
+        const { data } = await axios.get(
+          `https://app.ticketmaster.com/discovery/v2/attractions.json?size=1&apikey=${APIKEY}&keyword=${searchTerm}`
+        );
+        setAttractions(data._embedded.attractions);
+        setLoading(false);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    if(searchTerm.trim().length>0){
+        fetchData();
+    }
+  }, [searchTerm]);
+
+  useEffect(() => {
     setShowsEOD(false);
     setShowsWrongPage(false);
+    const nextURL = `/attractions/page/${urlPage}`;
+    const nextTitle = "Attractions page";
+    const nextState = { additionalInformation: "Updated the URL with JS" };
+    window.history.pushState(nextState, nextTitle, nextURL);
     const fetchAttractions = async () => {
       try {
         const nextURL = `/attractions/page/${urlPage}`;
@@ -112,64 +162,74 @@ const AttractionsListing = () => {
             params: {
               apikey: APIKEY,
               countryCode: "US",
-              page: urlPage,
+              page: urlPage-1,
             },
           }
         );
-        // try {
-        //   await axios.get(`https://app.ticketmaster.com/discovery/v2/attractions`, {
-        //     params: {
-        //       apikey: APIKEY,
-        //       countryCode: "US",
-        //       page: parseInt(urlPage) + 1,
-        //     },
-        //   });
-        // } catch (e) {
-        //   if (e.code === "ERR_BAD_REQUEST") {
-        //     setShowsEOD(true);
-        //     setLoading(false);
-        //   }
-        // }
         setShowsFirstPage(parseInt(urlPage) === 1);
-        console.log("Got data");
         setAttractions(response.data._embedded.attractions);
-        setTotalPages(response.data.page.totalPages);
-        console.log(`URL number = ${urlPage}`);
-        console.log(`total pages = ${totalPages}`);
         setLoading(false);
       } catch (e) {
-        console.log("end of data");
-        setShowsWrongPage(true);
-        setLoading(false);
+        if (e.code === "ERR_NETWORK") {
+          setShowsWrongPage(false);
+          setLoading(false);
+        } else {
+          setShowsWrongPage(true);
+          setLoading(false);
+        }
       }
     };
+    if(urlPage-1===49){
+        fetchAttractions();
+        setShowsEOD(true);
+        setLoading(false);
+      } else {
+      if (searchTerm.trim().length === 0) {
+        fetchAttractions();
+      }
+    }
+  }, [urlPage, searchTerm]);
 
-    fetchAttractions();
-  }, [urlPage]);
-
-  if (loading) {
+  if (searchTerm) {
+    return (
+      <div>
+        <StyledTitle>
+          <h2>Attractions Listing</h2>
+        </StyledTitle>
+        <Search searchValue={searchValue} />
+        <br></br>
+        {attractions.map((attraction) => buildCard(attraction))}
+        <br></br>
+      </div>
+    );
+  } else if (loading) {
     return (
       <div>
         <h2>Loading....</h2>
       </div>
     );
-  } else if (showsWrongPage) {
-    return (
-      <div>
-        <h1>404, Page not found!</h1>
-        <br />
-        <br />
-        <Button className="showlink" onClick={FirstPage}>
-          Go to First Page
-        </Button>
-        <br />
-        <br />
-      </div>
-    );
+  } else if (showsWrongPage || attractions.length === 0) {
+    if (!loading) {
+      return (
+        <div>
+          <h1>404, No Attractions Found!</h1>
+          <br />
+          <br />
+          <Button className="showlink" onClick={FirstPage}>
+            Go to First Page
+          </Button>
+          <br />
+          <br />
+        </div>
+      );
+    }
   } else {
     return (
       <div>
-        <h2>Attractions Listing</h2>
+        <StyledTitle>
+          <h2>Attractions Listing</h2>
+        </StyledTitle>
+        <Search searchValue={searchValue} />
         <div>
           {!showsFirstPage && (
             <Button className="showlink" onClick={handlePrevPage}>

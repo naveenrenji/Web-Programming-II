@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import {
   Button,
@@ -8,7 +8,18 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
-const APIKEY = "mWzS1KYw6kPb4fA0KJBqNXDAF0hUqI6A";
+import { styled } from "@mui/system";
+
+const APIKEY = "e127Ifc0YAMBpVEonI4wblzsVmDm7LhC";
+
+const StyledTitle = styled("h1")({
+  fontFamily: "Montserrat, sans-serif",
+  fontWeight: 800,
+  fontSize: "3rem",
+  color: "#1e8678",
+  marginBottom: "2rem",
+  textAlign: "center",
+});
 
 const buildEvent = (eventdata) => {
   return (
@@ -16,7 +27,7 @@ const buildEvent = (eventdata) => {
       key={eventdata.id}
       variant="outlined"
       sx={{
-        maxWidth: 450,
+        maxWidth: 850,
         mx: "auto",
         borderRadius: 5,
         border: "1px solid #1e8678",
@@ -41,84 +52,163 @@ const buildEvent = (eventdata) => {
       />
       <CardContent>
         <br></br>
-        <Typography
-          sx={{
-            borderBottom: "1px solid #1e8678",
-            fontWeight: "bold",
-            fontSize: "1.2rem",
-            textAlign: "center",
-          }}
-          gutterBottom
-          component="h3"
-        >
-          {eventdata.name}
-        </Typography>
-        <br></br>
+        <div className="event-header">
+          <h1>{eventdata.name}</h1>
+          {eventdata.dates.start.localDate && (
+            <>
+              <p className="event-date">{eventdata.dates.start.localDate}</p>
+            </>
+          )}
+        </div>
         {eventdata.priceRanges && (
           <>
-            <Typography variant="body2" color="textSecondary" component="p">
+            <h4>
               Price Range ${eventdata.priceRanges[0].min} - $
               {eventdata.priceRanges[0].max}
-            </Typography>
-            <br></br>
+            </h4>
           </>
         )}
         {!eventdata.priceRanges && (
           <>
-            <Typography variant="body2" color="textSecondary" component="p">
-              Price Range Not Available
-            </Typography>
-            <br></br>
+            <h4>Price Range Not Available</h4>
           </>
         )}
-        {eventdata.dates.start.localDate && (
-          <>
-            <Typography variant="body2" color="textSecondary" component="p">
-              Start Date - {eventdata.dates.start.localDate}
-            </Typography>
-            <br></br>
-          </>
-        )}
-        {eventdata.classifications && (
-          <>
-            <Typography variant="body2" color="textSecondary" component="p">
-              Genre - {eventdata.classifications[0].genre.name}
-            </Typography>
-            <br></br>
-          </>
-        )}
-        {eventdata.classifications && (
-          <>
-            <Typography variant="body2" color="textSecondary" component="p">
-              Segment - {eventdata.classifications[0].segment.name}
-            </Typography>
-            <br></br>
-          </>
-        )}
-        {eventdata.venues && (
-          <>
-            <Typography variant="body2" color="textSecondary" component="p">
-              Venue Name - {eventdata.venues[0].name}
-            </Typography>
-            <br></br>
-          </>
-        )}
-        {eventdata.venues && (
-          <>
-            <Typography variant="body2" color="textSecondary" component="p">
-              Venue State - {eventdata.venues[0].state}
-            </Typography>
-            <br></br>
-          </>
-        )}
-        {eventdata.venues && (
-          <>
-            <Typography variant="body2" color="textSecondary" component="p">
-              Venue Address - {eventdata.venues[0].address}
-            </Typography>
-            <br></br>
-          </>
-        )}
+        <h2>Event Details</h2>
+        <ul>
+          <li>
+            {eventdata.promoter && eventdata.promoter.name && (
+              <>
+                <Typography variant="body2" color="textSecondary" component="p">
+                  <strong>Promoter - </strong>
+                  {eventdata.promoter.name}
+                </Typography>
+              </>
+            )}
+          </li>
+          <li>
+            {eventdata.classifications && (
+              <>
+                <Typography variant="body2" color="textSecondary" component="p">
+                  <strong>Genre - </strong>
+                  {eventdata.classifications[0].genre.name}
+                </Typography>
+              </>
+            )}
+          </li>
+          <li>
+            {eventdata.classifications && (
+              <>
+                <Typography variant="body2" color="textSecondary" component="p">
+                  <strong>Segment - </strong>
+                  {eventdata.classifications[0].segment.name}
+                </Typography>
+              </>
+            )}
+          </li>
+          <li>
+            {eventdata.ticketLimit && (
+              <>
+                {eventdata.ticketLimit.info && (
+                  <>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      component="p"
+                    >
+                      <strong>Ticket Limit - </strong>
+                      {eventdata.ticketLimit.info}
+                    </Typography>
+                  </>
+                )}
+              </>
+            )}
+          </li>
+          <h3>Venue Details</h3>
+          {eventdata._embedded && (
+            <>
+              <li>
+                {eventdata._embedded.venues && (
+                  <>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      component="p"
+                    >
+                      <strong>Name - </strong>{" "}
+                      {eventdata._embedded.venues[0].name}
+                    </Typography>
+                  </>
+                )}
+              </li>
+              <li>
+                {eventdata._embedded.venues && (
+                  <>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      component="p"
+                    >
+                      <strong>State -</strong>{" "}
+                      {eventdata._embedded.venues[0].state.name} ,{" "}
+                      {eventdata._embedded.venues[0].state.stateCode}
+                    </Typography>
+                  </>
+                )}
+              </li>
+              <li>
+                {eventdata._embedded.venues && (
+                  <>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      component="p"
+                    >
+                      <strong>Address - </strong>{" "}
+                      {eventdata._embedded.venues[0].address.line1}
+                    </Typography>
+                  </>
+                )}
+              </li>
+              <li>
+                {eventdata._embedded.venues && (
+                  <>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      component="p"
+                    >
+                      <strong> Child Rules</strong> <br></br>
+                      {eventdata._embedded.venues[0].generalInfo
+                        ? eventdata._embedded.venues[0].generalInfo.childRule
+                          ? eventdata._embedded.venues[0].generalInfo.childRule
+                          : "N/A"
+                        : "N/A"}
+                    </Typography>
+                  </>
+                )}
+              </li>
+              <li>
+                {eventdata._embedded.venues && (
+                  <>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      component="p"
+                    >
+                      <strong> General Rules</strong> <br></br>
+                      {eventdata._embedded.venues[0].generalInfo
+                        ? eventdata._embedded.venues[0].generalInfo.generalRule
+                          ? eventdata._embedded.venues[0].generalInfo
+                              .generalRule
+                          : "N/A"
+                        : "N/A"}
+                    </Typography>
+                  </>
+                )}
+              </li>
+            </>
+          )}
+        </ul>
         <Button variant="contained" href={`/events/page/1`}>
           Back to all events
         </Button>
@@ -138,13 +228,13 @@ const EventDetails = () => {
     const fetchEvent = async () => {
       try {
         const response = await axios.get(
-          `https://app.ticketmaster.com/discovery/v2/events/${id}.json?apikey=mWzS1KYw6kPb4fA0KJBqNXDAF0hUqI6A`
+          `https://app.ticketmaster.com/discovery/v2/events/${id}.json?apikey=${APIKEY}`
         );
         console.log("Got data");
         setEvent(response.data);
         setLoading(false);
       } catch (e) {
-          setShowsWrongPage(true);
+        setShowsWrongPage(true);
         setLoading(false);
       }
     };
@@ -157,21 +247,25 @@ const EventDetails = () => {
         <h2>Loading....</h2>
       </div>
     );
-  } else if (showsWrongPage) {
-    return (
-      <div>
-        <h1>404, Page not found!</h1>
-        <br />
-        <Button variant="contained" href={`/events/page/1`}>
-          Back to all events
-        </Button>
-      </div>
-    );
+  } else if (showsWrongPage || event.length === 0) {
+    if (!loading) {
+      return (
+        <div>
+          <h1>404, Page not found!</h1>
+          <br />
+          <Button variant="contained" href={`/events/page/1`}>
+            Back to all events
+          </Button>
+        </div>
+      );
+    }
   } else {
     return (
       <div>
-        <h2>Event Details</h2>
-        {buildEvent(event)}
+        <StyledTitle>
+          <h2>Events Listing</h2>
+        </StyledTitle>
+                {buildEvent(event)}
         <br></br>
       </div>
     );
