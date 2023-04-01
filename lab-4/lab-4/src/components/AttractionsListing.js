@@ -20,7 +20,7 @@ const StyledTitle = styled("h1")({
   fontFamily: "Montserrat, sans-serif",
   fontWeight: 800,
   fontSize: "3rem",
-  color: "#1e8678",
+  color: "#178577",
   marginBottom: "2rem",
   textAlign: "center",
 });
@@ -36,14 +36,14 @@ const buildCard = (attraction) => {
           marginLeft: "auto",
           marginRight: "auto",
           borderRadius: 5,
-          border: "1px solid #1e8678",
+          border: "1px solid #178577",
           boxShadow:
             "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
           transition: "transform 0.3s ease-out",
           "&:hover": {
             transform: "scale(1.03)",
             boxShadow: "0 8px 15px rgba(0, 0, 0, 0.3)",
-            borderColor: "#1e8678",
+            borderColor: "#178577",
           },
         }}
       >
@@ -66,12 +66,13 @@ const buildCard = (attraction) => {
             <CardContent>
               <Typography
                 sx={{
-                  borderBottom: "1px solid #1e8678",
+                  borderBottom: "1px solid #178577",
                   fontWeight: "bold",
+                  color: "#178577"
                 }}
                 gutterBottom
                 variant="h6"
-                component="h3"
+                component="h2"
               >
                 {attraction.name}
               </Typography>
@@ -194,7 +195,7 @@ const AttractionsListing = () => {
     return (
       <div>
         <StyledTitle>
-          <h2>Attractions Listing</h2>
+          <p>Attractions Listing</p>
         </StyledTitle>
         <Search searchValue={searchValue} />
         <br></br>
@@ -205,7 +206,7 @@ const AttractionsListing = () => {
   } else if (loading) {
     return (
       <div>
-        <h2>Loading....</h2>
+        <p>Loading....</p>
       </div>
     );
   } else if (showsWrongPage || attractions.length === 0) {
@@ -227,7 +228,7 @@ const AttractionsListing = () => {
     return (
       <div>
         <StyledTitle>
-          <h2>Attractions Listing</h2>
+          <p>Attractions Listing</p>
         </StyledTitle>
         <Search searchValue={searchValue} />
         <div>

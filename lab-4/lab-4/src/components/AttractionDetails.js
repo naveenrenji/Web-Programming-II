@@ -15,12 +15,12 @@ const StyledTitle = styled("h1")({
   fontFamily: "Montserrat, sans-serif",
   fontWeight: 800,
   fontSize: "3rem",
-  color: "#1e8678",
+  color: "#178577",
   marginBottom: "2rem",
   textAlign: "center",
 });
 const buttonStyle = {
-  borderBottom: "1px solid #1e8678",
+  borderBottom: "1px solid #178577",
   fontWeight: "bold",
   fontSize: "1.0rem",
   textAlign: "center",
@@ -35,7 +35,7 @@ const infoStyle = {
   fontWeight: "bold",
   fontSize: "0.8rem",
   textAlign: "center",
-  border: "1px solid #1e8678",
+  border: "1px solid #178577",
   boxShadow: "0 5px 5px rgba(0,0,0,0.30), 0 5px 5px rgba(0,0,0,0.22)",
 };
 
@@ -48,7 +48,7 @@ const buildAttraction = (attractionData) => {
         maxWidth: 450,
         mx: "auto",
         borderRadius: 5,
-        border: "1px solid #1e8678",
+        border: "1px solid #178577",
         boxShadow: "0 5px 5px rgba(0,0,0,0.30), 0 5px 5px rgba(0,0,0,0.22)",
         display: "flex",
         flexDirection: "column",
@@ -64,7 +64,7 @@ const buildAttraction = (attractionData) => {
           fontWeight: "bold",
           fontSize: "1.5rem",
           textAlign: "center",
-          border: "1px solid #1e8678",
+          border: "1px solid #178577",
           boxShadow: "0 5px 5px rgba(0,0,0,0.30), 0 5px 5px rgba(0,0,0,0.22)",
         }}
         component="img"
@@ -75,13 +75,13 @@ const buildAttraction = (attractionData) => {
         <br></br>
         <Typography
           sx={{
-            borderBottom: "1px solid #1e8678",
+            borderBottom: "1px solid #178577",
             fontWeight: "bold",
             fontSize: "1.2rem",
             textAlign: "center",
           }}
           gutterBottom
-          component="h3"
+          component="h2"
         >
           {attractionData.name}
         </Typography>
@@ -267,7 +267,7 @@ const AttractionDetails = () => {
   if (loading) {
     return (
       <div>
-        <h2>Loading....</h2>
+        <p>Loading....</p>
       </div>
     );
   } else if (showsWrongPage || attraction.length === 0) {
@@ -286,7 +286,7 @@ const AttractionDetails = () => {
     return (
       <div>
         <StyledTitle>
-          <h2>Attraction Details</h2>
+          <p>Attraction Details</p>
         </StyledTitle>
         {buildAttraction(attraction)}
         <br></br>

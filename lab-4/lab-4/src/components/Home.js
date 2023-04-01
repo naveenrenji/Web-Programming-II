@@ -15,7 +15,7 @@ const StyledTitle = styled('h1')({
   fontFamily: "Montserrat, sans-serif",
   fontWeight: 800,
   fontSize: "3rem",
-  color: "#2aa796",
+  color: "white",
   marginBottom: "2rem",
   textAlign: "center"
 })
@@ -32,11 +32,11 @@ const StyledCard = styled(Card)({
   backgroundColor: "white"
 })
 
-const StyledSubTitle = styled('h3')({
+const StyledSubTitle = styled('h2')({
   fontFamily: "Montserrat, sans-serif",
   fontWeight: 600,
   fontSize: "1.5rem",
-  color: "#1e8678",
+  color: "#178577",
   marginBottom: "2rem",
   textAlign: "center"
 })

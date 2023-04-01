@@ -12,7 +12,7 @@ const StyledTitle = styled("h1")({
   fontFamily: "Montserrat, sans-serif",
   fontWeight: 800,
   fontSize: "3rem",
-  color: "#1e8678",
+  color: "#178577",
   marginBottom: "2rem",
   textAlign: "center",
 });
@@ -21,7 +21,7 @@ const buildCard = (venue) => {
   return (
     <CardActionArea>
       <Link to={`/venues/${venue.id}`}>
-        <Box
+        <Box key={venue.id}
           sx={{
             display: "flex",
             alignItems: "center",
@@ -29,14 +29,14 @@ const buildCard = (venue) => {
             marginY: 2,
             padding: 2,
             borderRadius: 5,
-            border: "1px solid #1e8678",
+            border: "1px solid #178577",
             boxShadow:
               "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22)",
             transition: "transform 0.3s ease-out",
             "&:hover": {
               transform: "scale(1.03)",
               boxShadow: "0 8px 15px rgba(0, 0, 0, 0.3)",
-              borderColor: "#1e8678",
+              borderColor: "#178577",
             },
           }}
         >
@@ -55,14 +55,14 @@ const buildCard = (venue) => {
             }}
           />
           <Box sx={{ flexGrow: 1, marginLeft: 2 }}>
-            <Link to={`/venues/${venue.id}`}>
               <Typography
                 sx={{
                   fontWeight: "bold",
                   marginBottom: 1,
                 }}
                 variant="h6"
-                component="h3"
+                component="h2"
+                color= "#178577"
               >
                 {venue.name}
               </Typography>
@@ -77,7 +77,6 @@ const buildCard = (venue) => {
                   No upcoming events on Ticketmaster{" "}
                 </Typography>
               )}
-            </Link>
           </Box>
         </Box>
       </Link>
@@ -180,7 +179,7 @@ const VenuesListing = () => {
     return (
       <div>
         <StyledTitle>
-          <h2>Venues Listing</h2>
+          <p>Venues Listing</p>
         </StyledTitle>
         <Search searchValue={searchValue} />
         <br></br>
@@ -191,7 +190,7 @@ const VenuesListing = () => {
   } else if (loading) {
     return (
       <div>
-        <h2>Loading....</h2>
+        <p>Loading....</p>
       </div>
     );
   } else if (showsWrongPage || venues.length === 0) {
@@ -213,7 +212,7 @@ const VenuesListing = () => {
     return (
       <div>
         <StyledTitle>
-          <h2>Venues Listing</h2>
+          <p>Venues Listing</p>
         </StyledTitle>
         <Search searchValue={searchValue} />
         <div>
@@ -240,7 +239,7 @@ const VenuesListing = () => {
               marginY: 2,
               padding: 2,
               borderRadius: 5,
-              border: "2px solid #1e8678",
+              border: "2px solid #178577",
               backgroundColor: "#fff",
               boxShadow: "0 5px 5px rgba(0, 0, 0, 0.15)",
             }}

@@ -5,13 +5,12 @@ import { Button, Card, CardMedia, Box, Typography } from "@mui/material";
 import noImage from "../img/download.jpeg";
 import { styled } from "@mui/system";
 
-
 const APIKEY = "e127Ifc0YAMBpVEonI4wblzsVmDm7LhC";
 const StyledTitle = styled("h1")({
   fontFamily: "Montserrat, sans-serif",
   fontWeight: 800,
   fontSize: "3rem",
-  color: "#1e8678",
+  color: "#178577",
   marginBottom: "2rem",
   textAlign: "center",
 });
@@ -39,7 +38,7 @@ const buildVenue = (venueData) => {
         maxWidth: 650,
         mx: "auto",
         borderRadius: 5,
-        border: "1px solid #1e8678",
+        border: "1px solid #178577",
         boxShadow: "0 5px 5px rgba(0,0,0,0.30), 0 5px 5px rgba(0,0,0,0.22)",
         display: "flex",
         flexDirection: "column",
@@ -55,7 +54,7 @@ const buildVenue = (venueData) => {
           fontWeight: "bold",
           fontSize: "1.5rem",
           textAlign: "center",
-          border: "1px solid #1e8678",
+          border: "1px solid #178577",
           boxShadow: "0 5px 5px rgba(0,0,0,0.30), 0 5px 5px rgba(0,0,0,0.22)",
         }}
         component="img"
@@ -64,10 +63,10 @@ const buildVenue = (venueData) => {
       />
       <br></br>
       <Box sx={{ maxWidth: 600, mx: "auto", px: 2 }}>
-        <Typography variant="h4" sx={{ mb: 2 }}>
+        <Typography variant="h2" sx={{ mb: 2 }}>
           {name}
         </Typography>
-        <Typography variant="h6" sx={{ mb: 2 }}>
+        <Typography variant="h3" sx={{ mb: 2 }}>
           Address:
         </Typography>
         {address && city && state && country ? (
@@ -78,17 +77,17 @@ const buildVenue = (venueData) => {
         ) : (
           <Typography sx={{ mb: 2 }}>N/A</Typography>
         )}
-        <Typography variant="h6" sx={{ mb: 2 }}>
+        <Typography variant="h3" sx={{ mb: 2 }}>
           Timezone:
         </Typography>
         <Typography sx={{ mb: 2 }}>{timezone ? timezone : "N/A"}</Typography>
-        <Typography variant="h6" sx={{ mb: 2 }}>
+        <Typography variant="h3" sx={{ mb: 2 }}>
           Parking:
         </Typography>
         <Typography sx={{ mb: 2 }}>
           {parkingDetail ? parkingDetail : "N/A"}
         </Typography>
-        <Typography variant="h6" sx={{ mb: 2 }}>
+        <Typography variant="h3" sx={{ mb: 2 }}>
           Box Office:
         </Typography>
         <Typography sx={{ mb: 2 }}>
@@ -112,35 +111,40 @@ const buildVenue = (venueData) => {
             ? boxOfficeInfo.willCallDetail
             : "N/A"}
         </Typography>
-        <Typography variant="h6" sx={{ mb: 2 }}>
+        <Typography variant="h3" sx={{ mb: 2 }}>
           Accessibility:
         </Typography>
         <Typography sx={{ mb: 2 }}>
           {accessibleSeatingDetail ? accessibleSeatingDetail : "N/A"}
         </Typography>
-        <Typography variant="h6" sx={{ mb: 2 }}>
+        <Typography variant="h3" sx={{ mb: 2 }}>
           Children:
         </Typography>
         <Typography sx={{ mb: 2 }}>{childRule ? childRule : "N/A"}</Typography>
-        <Typography variant="h6" sx={{ mb: 2 }}>
+        <Typography variant="h3" sx={{ mb: 2 }}>
           Rules:
         </Typography>
         <Typography sx={{ mb: 2 }}>
           {generalRule ? generalRule : "N/A"}
         </Typography>
-        <Typography variant="h6" sx={{ mb: 2 }}>
+        <Typography variant="h3" sx={{ mb: 2 }}>
           Upcoming Events:
         </Typography>
         {upcomingEvents && upcomingEvents.ticketmaster ? (
           <Typography sx={{ mb: 2 }}>
             {upcomingEvents.ticketmaster} upcoming events on{" "}
-            <a href={url} target="_blank" rel="noopener noreferrer">
-              Ticketmaster
+            <a
+              color="#178577"
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+             <strong>Ticketmaster </strong> 
             </a>
           </Typography>
         ) : (
           <Typography sx={{ mb: 2 }}>
-            No upcoming events on Ticketmaster{" "}
+            <strong>No upcoming events on Ticketmaster{" "} </strong>
           </Typography>
         )}
       </Box>
@@ -180,7 +184,7 @@ const VenueDetails = () => {
   if (loading) {
     return (
       <div>
-        <h2>Loading....</h2>
+        <p>Loading....</p>
       </div>
     );
   } else if (showsWrongPage || venue.length === 0) {
@@ -199,7 +203,7 @@ const VenueDetails = () => {
     return (
       <div>
         <StyledTitle>
-          <h2>Venue Details</h2>
+          <p>Venue Details</p>
         </StyledTitle>
         {buildVenue(venue)}
         <br></br>

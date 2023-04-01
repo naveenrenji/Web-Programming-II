@@ -12,7 +12,7 @@
 }
 
 input {
-	border: 1px solid #1e8678;
+	border: 1px solid #178577;
 }
 .show-body {
 	display: block;
@@ -22,7 +22,7 @@ input {
 }
 
 .App-header {
-	background-color: #1e8678;
+	background-color: #178577;
 	height: 200px;
 	padding: 20px;
 	color: #222;
@@ -63,7 +63,7 @@ col-md-4 {
 	padding: 0.4rem 0.8rem;
 	background-color: white;
 	border-radius: 3px;
-	color: #1e8678;
+	color: #178577;
 	text-decoration: none !important;
 	margin: 5px;
 }
@@ -89,7 +89,7 @@ div {
 }
 
 a {
-	color: #1e8678;
+	color: #178577;
 	text-decoration: none !important;
 }
 
@@ -104,7 +104,7 @@ ul {
 
 .title {
 	font-weight: bold;
-	color: #1e8678;
+	color: #178577;
 }
 
 @media screen and (-webkit-min-device-pixel-ratio: 0) {

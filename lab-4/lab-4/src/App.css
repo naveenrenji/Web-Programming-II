@@ -14,7 +14,7 @@
 	}
 	
 	input {
-	border: 2px solid #7bef94;
+	border: 2px solid #ffcc81;
 	background-color: transparent;
 	border-radius: 30px;
 	padding: 8px 16px;
@@ -27,8 +27,8 @@
 	
 	input:focus {
 	outline: none;
-	border: 2px solid #1e8678;
-	background-color: #1e8678;
+	border: 2px solid #ffcc81;
+	background-color: #ffcc81;
 	color: white;
 	}
 	
@@ -40,7 +40,7 @@
 	}
 	
 	.App-header {
-	background-color: #1e8678;
+	background-color: #178577;
 	height: 100px;
 	padding: 20px;
 	color: #f8f8f8;
@@ -49,7 +49,7 @@
 	.App-title {
 	font-size: 3em;
 	font-weight: bold;
-	color: #2bb734;
+	color: #ffcc81;
 	margin-top: 0;
 	}
 	
@@ -65,7 +65,7 @@
 	
 	td {
 	padding: 20px;
-	border: 2px solid #1e8678;
+	border: 2px solid #ffcc81;
 	}
 	
 	.App-intro {
@@ -78,7 +78,7 @@
 	
 	.col-sm-6,
 	col-md-4 {
-	border: 2px solid #27c747;
+	border: 2px solid #ffcc81;
 	border-radius: 10px;
 	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
 	margin-bottom: 30px;
@@ -87,23 +87,23 @@
 	
 	.hometext {
 	max-width: 60%;
-	color: #1e8678;
+	color: #178577;
 	font-size: 1.2em;
 	line-height: 1.5em;
 	}
 	
 	.showlink {
 	padding: 0.4rem 0.8rem;
-	background-color: #37c173;
+	background-color: #ffcc81;
 	border-radius: 30px;
-	color: #1e8678;
+	color: #224c39;
 	text-decoration: none !important;
 	margin: 5px;
 	transition: all 0.3s ease;
 	}
 	
 	.showlink:hover {
-	background-color: #1e8678;
+	background-color: #178577;
 	color: #f8f8f8;
 	border: 2px solid #f8f8f8;
 	}
@@ -125,12 +125,12 @@
 	}
 	
 	a {
-	color: #1e8678;
+	color: #178577;
 	text-decoration: none !important;
 	}
 	
 	ul a:hover {
-	background-color: #1e8678;
+	background-color: #178577;
 	color: #f8f8f8;
 	}
 	

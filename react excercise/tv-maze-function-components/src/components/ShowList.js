@@ -121,7 +121,7 @@ const ShowList = () => {
             marginLeft: "auto",
             marginRight: "auto",
             borderRadius: 5,
-            border: "1px solid #1e8678",
+            border: "1px solid #178577",
             boxShadow:
               "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
           }}
@@ -145,7 +145,7 @@ const ShowList = () => {
               <CardContent>
                 <Typography
                   sx={{
-                    borderBottom: "1px solid #1e8678",
+                    borderBottom: "1px solid #178577",
                     fontWeight: "bold",
                   }}
                   gutterBottom

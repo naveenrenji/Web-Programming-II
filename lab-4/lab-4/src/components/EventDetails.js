@@ -16,7 +16,7 @@ const StyledTitle = styled("h1")({
   fontFamily: "Montserrat, sans-serif",
   fontWeight: 800,
   fontSize: "3rem",
-  color: "#1e8678",
+  color: "#178577",
   marginBottom: "2rem",
   textAlign: "center",
 });
@@ -30,7 +30,7 @@ const buildEvent = (eventdata) => {
         maxWidth: 850,
         mx: "auto",
         borderRadius: 5,
-        border: "1px solid #1e8678",
+        border: "1px solid #178577",
         boxShadow: "0 5px 5px rgba(0,0,0,0.30), 0 5px 5px rgba(0,0,0,0.22)",
         display: "flex",
         flexDirection: "column",
@@ -43,7 +43,7 @@ const buildEvent = (eventdata) => {
           height: "70%",
           width: "70%",
           borderRadius: 5,
-          border: "1px solid #1e8678",
+          border: "1px solid #178577",
           boxShadow: "0 5px 5px rgba(0,0,0,0.30), 0 5px 5px rgba(0,0,0,0.22)",
         }}
         component="img"
@@ -62,18 +62,18 @@ const buildEvent = (eventdata) => {
         </div>
         {eventdata.priceRanges && (
           <>
-            <h4>
+            <h2>
               Price Range ${eventdata.priceRanges[0].min} - $
               {eventdata.priceRanges[0].max}
-            </h4>
+            </h2>
           </>
         )}
         {!eventdata.priceRanges && (
           <>
-            <h4>Price Range Not Available</h4>
+            <h2>Price Range Not Available</h2>
           </>
         )}
-        <h2>Event Details</h2>
+        <p>Event Details</p>
         <ul>
           <li>
             {eventdata.promoter && eventdata.promoter.name && (
@@ -244,7 +244,7 @@ const EventDetails = () => {
   if (loading) {
     return (
       <div>
-        <h2>Loading....</h2>
+        <p>Loading....</p>
       </div>
     );
   } else if (showsWrongPage || event.length === 0) {
@@ -263,7 +263,7 @@ const EventDetails = () => {
     return (
       <div>
         <StyledTitle>
-          <h2>Events Listing</h2>
+          <p>Event Details</p>
         </StyledTitle>
                 {buildEvent(event)}
         <br></br>
