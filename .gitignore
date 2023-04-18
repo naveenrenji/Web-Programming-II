@@ -1,3 +1,5 @@
 
 lab-4/lab-4/package-lock.json
 *.zip
+
+node_modules

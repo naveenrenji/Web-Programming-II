@@ -23,23 +23,23 @@ function App() {
           <header className="App-header">
             <h1 className="App-title">Location App</h1>
             <nav>
-              <NavLink className="navlink" to="/">
+              <NavLink className="showlink" to="/">
                 Home
               </NavLink>
-              <NavLink className="navlink" to="/my-likes">
+              <NavLink className="showlink" to="/my-likes">
                 My Likes
               </NavLink>
-              <NavLink className="navlink" to="/my-locations">
+              <NavLink className="showlink" to="/my-locations">
                 My Locations
               </NavLink>
-              <NavLink className="navlink" to="/new-location">
+              {/* <NavLink className="showlink" to="/new-location">
                 New Location
-              </NavLink>
+              </NavLink> */}
             </nav>
           </header>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/my-likes" element={<LikedLocations />} />
+            <Route path="/my-likes" element={<LikedLocations  />} />
             <Route path="/my-locations" element={<UserPostedLocations />} />
             <Route path="/new-location" element={<NewLocation />} />
           </Routes>

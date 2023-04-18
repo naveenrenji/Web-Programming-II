@@ -43,47 +43,51 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     locationPosts: async (_, { pageNum }) => {
-        const locations = await fetchLocationsFromPlacesAPI(pageNum);
-        try {
-          const locationsWithPhotos = await Promise.all(
-            locations.map(async (location) => {
-              let photoUrl;
-              try {
-                photoUrl = await fetchPlacePhotos(location.fsq_id);
-              } catch (error) {
-                console.log("Error fetching photo for location:", location.fsq_id);
-                photoUrl = "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg";
-              }
-      
-              return {
-                ...location,
-                address: location.location.formatted_address,
-                id: location.fsq_id,
-                image: photoUrl,
-                liked: false,
-                userPosted: false,
-              };
-            })
-          );
-          return locationsWithPhotos;
-        } catch (error) {
-          console.log(error);
-        }
-      },      
-      likedLocations: async () => {
-        const likedLocations = await getUserLikedLocations();
-        const likedLocationsWithDefaultImage = likedLocations.map((location) => {
-          if (!location.image) {
+      const locations = await fetchLocationsFromPlacesAPI(pageNum);
+      try {
+        const locationsWithPhotos = await Promise.all(
+          locations.map(async (location) => {
+            let photoUrl;
+            try {
+              photoUrl = await fetchPlacePhotos(location.fsq_id);
+            } catch (error) {
+              console.log(
+                "Error fetching photo for location:",
+                location.fsq_id
+              );
+              photoUrl =
+                "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg";
+            }
+
             return {
               ...location,
-              image:
-                "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg",
+              address: location.location.formatted_address,
+              id: location.fsq_id,
+              image: photoUrl,
+              liked: false,
+              userPosted: false,
             };
-          }
-          return location;
-        });
-        return likedLocationsWithDefaultImage;
-      },      
+          })
+        );
+        return locationsWithPhotos;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    likedLocations: async () => {
+      const likedLocations = await getUserLikedLocations();
+      const likedLocationsWithDefaultImage = likedLocations.map((location) => {
+        if (!location.image) {
+          return {
+            ...location,
+            image:
+              "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg",
+          };
+        }
+        return location;
+      });
+      return likedLocationsWithDefaultImage;
+    },
     userPostedLocations: async () => {
       const userPostedLocations = await getUserUploadedLocations();
       return userPostedLocations;
@@ -109,7 +113,11 @@ const resolvers = {
     ) => {
       // Fetch and update the location data
       const likedLocations = await getUserLikedLocations();
+      const uploadedLocations = await getUserUploadedLocations();
       const locationIndex = likedLocations.findIndex((loc) => loc.id === id);
+      const postedLocationIndex = uploadedLocations.findIndex(
+        (loc) => loc.id === id
+      );
       if (locationIndex >= 0) {
         if (likedLocations[locationIndex].liked) {
           liked = false;
@@ -128,6 +136,13 @@ const resolvers = {
         userPosted: userPosted,
         liked: liked,
       };
+
+      console.log(uploadedLocations);
+      if (postedLocationIndex >= 0) {
+        uploadedLocations[postedLocationIndex] = updatedLocation;
+      }
+      console.log(uploadedLocations);
+
       if (liked) {
         if (locationIndex < 0) {
           likedLocations.push(updatedLocation);
@@ -139,6 +154,8 @@ const resolvers = {
           likedLocations.splice(locationIndex, 1);
         }
       }
+      await client.set("userUploadedLocations", JSON.stringify(uploadedLocations));
+
       await client.set("userLikedLocations", JSON.stringify(likedLocations));
       return updatedLocation;
     },

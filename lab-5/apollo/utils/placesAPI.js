@@ -15,7 +15,7 @@ async function fetchLocationsFromPlacesAPI(pageNum = 1) {
     const response = await axios.request(options);
     return response.data.results;
   } catch (error) {
-    throw new Error(`An error occurred: ${response.statusText}`);
+    throw new Error(`An error occurred: ${error}`);
   }
 }
 
@@ -37,7 +37,7 @@ async function fetchPlacePhotos(fsq_id) {
     let photo = response.data[0];
     let photoURl = photo.prefix + "400x400" + photo.suffix;
     return photoURl;
-  } catch (e) {
+  } catch (error) {
     throw new Error(`An error occurred: ${error}`);
   }
 }
