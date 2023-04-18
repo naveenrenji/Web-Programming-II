@@ -1,4 +1,3 @@
-// src/App.js
 import React from "react";
 import "./App.css";
 import { NavLink, BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -32,9 +31,6 @@ function App() {
               <NavLink className="showlink" to="/my-locations">
                 My Locations
               </NavLink>
-              {/* <NavLink className="showlink" to="/new-location">
-                New Location
-              </NavLink> */}
             </nav>
           </header>
           <Routes>
