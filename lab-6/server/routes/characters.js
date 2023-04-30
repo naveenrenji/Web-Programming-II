@@ -33,6 +33,43 @@ router.route("/:id").get(async (req, res) => {
     const characters = data.data.results.map((character) => {
       const thumbnail =
         character.thumbnail.path + "." + character.thumbnail.extension;
+      const description = character.description === "" ? "No Description" : character.description;
+      const comic = character.comics.items.length===0? "No Comic Available" : character.comics.items[0].name;
+      return {
+        id: character.id,
+        name: character.name,
+        description: description,
+        comic: comic,
+        image: thumbnail,
+        urls: character.urls,
+      };
+    });
+    await client.set(`character-${id}`, JSON.stringify(characters[0]));
+    res.status(200).json(characters);
+  } catch (e) {
+    return res.status(500).json({ error: e.message, e });
+  }
+});
+
+router.route("/search/:nameStartsWith").get(async (req, res) => {
+  try {
+    let nameStartsWith = req.params.nameStartsWith;
+    let url =
+      baseUrl +
+      "?ts=" +
+      ts +
+      "&apikey=" +
+      publickey +
+      "&hash=" +
+      hash +
+      "&nameStartsWith=" +
+      nameStartsWith;
+    const { data } = await axios.get(url);
+    if (data.data.results.length == 0)
+      return res.status(404).json({ error: "No character found for that nameStartsWith" });
+    const characters = data.data.results.map((character) => {
+      const thumbnail =
+        character.thumbnail.path + "." + character.thumbnail.extension;
       return {
         id: character.id,
         name: character.name,
@@ -40,7 +77,7 @@ router.route("/:id").get(async (req, res) => {
         urls: character.urls,
       };
     });
-    await client.set(`character-${id}`, JSON.stringify(characters[0]));
+    //await client.set(`character-${id}`, JSON.stringify(characters[0]));
     res.status(200).json(characters);
   } catch (e) {
     return res.status(500).json({ error: e.message, e });

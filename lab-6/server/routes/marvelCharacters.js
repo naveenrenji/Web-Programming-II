@@ -25,7 +25,7 @@ router.route("/page/:pagenum").get(async (req, res) => {
     if (!page) {
       page = 1;
     }
-    let limit = 20;
+    let limit = 5;
     let offset = 0;
     if (page > 1) {
       offset = (page - 1) * limit;
