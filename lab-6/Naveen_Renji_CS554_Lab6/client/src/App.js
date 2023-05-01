@@ -2,6 +2,7 @@ import './App.css';
 import Home from './components/Home';
 import EventsListing from './components/EventsListing';
 import EventDetails from './components/EventDetails';
+import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import CollectorContextProvider from './components/CollectorContext';
 import Collectors from './components/Collectors';
 
