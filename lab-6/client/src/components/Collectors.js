@@ -129,6 +129,7 @@ const Collectors = () => {
                         removeCharacterFromCollector(index, charIndex)
                       }
                       className="give-up-btn"
+                      disabled={selectedCollector !== index}
                     >
                       Give up
                     </Button>
@@ -141,7 +142,6 @@ const Collectors = () => {
       </TableContainer>
     </div>
   );
-  
 };
 
 export default Collectors;
