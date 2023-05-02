@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useRouter } from "next/router";
 import axios from "axios";
 import { Button, Card, CardMedia, Box, Typography } from "@mui/material";
-import noImage from "../img/download.jpeg";
 import { styled } from "@mui/system";
 
 const APIKEY = "e127Ifc0YAMBpVEonI4wblzsVmDm7LhC";
@@ -58,7 +57,7 @@ const buildVenue = (venueData) => {
           boxShadow: "0 5px 5px rgba(0,0,0,0.30), 0 5px 5px rgba(0,0,0,0.22)",
         }}
         component="img"
-        image={images && images[0].url ? images[0].url : noImage}
+        image={images && images[0].url ? images[0].url : "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png?20210219185637"}
         title={name}
       />
       <br></br>
@@ -134,7 +133,6 @@ const buildVenue = (venueData) => {
           <Typography sx={{ mb: 2 }}>
             {upcomingEvents.ticketmaster} upcoming events on{" "}
             <a
-              color="#178577"
               href={url}
               target="_blank"
               rel="noopener noreferrer"
@@ -161,7 +159,8 @@ const VenueDetails = () => {
   const [venue, setVenue] = useState();
   const [loading, setLoading] = useState(true);
   const [showsWrongPage, setShowsWrongPage] = useState(false);
-  const { id } = useParams();
+  const router = useRouter();
+  const  id  = router.query.id;
 
   useEffect(() => {
     console.log(`on load useEffect for page ${id}`);
@@ -184,7 +183,7 @@ const VenueDetails = () => {
   if (loading) {
     return (
       <div>
-        <p>Loading....</p>
+        <span>Loading....</span>
       </div>
     );
   } else if (showsWrongPage || venue.length === 0) {
@@ -203,7 +202,7 @@ const VenueDetails = () => {
     return (
       <div>
         <StyledTitle>
-          <p>Venue Details</p>
+          <span>Venue Details</span>
         </StyledTitle>
         {buildVenue(venue)}
         <br></br>

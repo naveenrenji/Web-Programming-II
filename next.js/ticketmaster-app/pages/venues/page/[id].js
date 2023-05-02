@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Button, Box, CardActionArea, Grid, Typography } from "@mui/material";
+import { Button, Box, CardMedia, Grid, Typography } from "@mui/material";
 import { styled } from "@mui/system";
-import Search from "./Search";
-import noImage from "../img/download.jpeg";
-import { Link, useParams } from "react-router-dom";
+import Search from "@/components/Search";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 const APIKEY = "e127Ifc0YAMBpVEonI4wblzsVmDm7LhC";
 
@@ -17,70 +17,83 @@ const StyledTitle = styled("h1")({
   textAlign: "center",
 });
 
+const buttonStyle = {
+  borderBottom: "1px solid #ED1D24",
+  fontWeight: "bold",
+  fontSize: "1.0rem",
+  textAlign: "center",
+  margin: "10px",
+  backgroundColor: "#006ec8",
+  color: "#f0f0f0",
+  "&:hover": {
+    backgroundColor: "#ED1D24",
+  },
+};
+
 const buildCard = (venue) => {
   return (
-    <CardActionArea>
-      <Link to={`/venues/${venue.id}`}>
-        <Box key={venue.id}
+    <Link key={venue.id} href={`/venues/${venue.id}`}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginY: 2,
+          padding: 2,
+          borderRadius: 5,
+          border: "1px solid #178577",
+          boxShadow:
+            "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22)",
+          transition: "transform 0.3s ease-out",
+          "&:hover": {
+            transform: "scale(1.03)",
+            boxShadow: "0 8px 15px rgba(0, 0, 0, 0.3)",
+            borderColor: "#178577",
+          },
+        }}
+      >
+        <CardMedia
           sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginY: 2,
-            padding: 2,
+            height: 100,
+            width: 100,
             borderRadius: 5,
-            border: "1px solid #178577",
-            boxShadow:
-              "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22)",
-            transition: "transform 0.3s ease-out",
-            "&:hover": {
-              transform: "scale(1.03)",
-              boxShadow: "0 8px 15px rgba(0, 0, 0, 0.3)",
-              borderColor: "#178577",
-            },
+            marginRight: 2,
           }}
-        >
-          <img
-            src={
-              venue.images && venue.images[0].url
-                ? venue.images[0].url
-                : noImage
-            }
-            alt={venue.name}
-            style={{
-              height: 100,
-              width: 100,
-              borderRadius: 5,
-              marginRight: 2,
+          component="img"
+          image={
+            venue.images && venue.images[0].url
+              ? venue.images[0].url
+              : "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png?20210219185637"
+          }
+          title={venue.name}
+        />
+
+        <Box sx={{ flexGrow: 1, marginLeft: 2 }}>
+          <Typography
+            sx={{
+              fontWeight: "bold",
+              marginBottom: 1,
             }}
-          />
-          <Box sx={{ flexGrow: 1, marginLeft: 2 }}>
-              <Typography
-                sx={{
-                  fontWeight: "bold",
-                  marginBottom: 1,
-                }}
-                variant="h6"
-                component="h2"
-                color= "#178577"
-              >
-                {venue.name}
-              </Typography>
-              {venue.upcomingEvents && venue.upcomingEvents.ticketmaster ? (
-                <Typography variant="body2" color="textSecondary" component="p">
-                  `{venue.upcomingEvents.ticketmaster} upcoming events on
-                  Ticketmaster`
-                  <br />
-                </Typography>
-              ) : (
-                <Typography variant="body2" color="textSecondary" component="p">
-                  No upcoming events on Ticketmaster{" "}
-                </Typography>
-              )}
-          </Box>
+            variant="h6"
+            component="h2"
+            color="#178577"
+          >
+            {venue.name}
+          </Typography>
+          {venue.upcomingEvents && venue.upcomingEvents.ticketmaster ? (
+            <Typography variant="body2" color="textSecondary" component="p">
+              `{venue.upcomingEvents.ticketmaster} upcoming events on
+              Ticketmaster`
+              <br />
+            </Typography>
+          ) : (
+            <Typography variant="body2" color="textSecondary" component="p">
+              No upcoming events on Ticketmaster{" "}
+            </Typography>
+          )}
         </Box>
-      </Link>
-    </CardActionArea>
+      </Box>
+    </Link>
   );
 };
 
@@ -91,7 +104,8 @@ const VenuesListing = () => {
   const [showsEOD, setShowsEOD] = useState(false);
   const [showsWrongPage, setShowsWrongPage] = useState(false);
   const [showsFirstPage, setShowsFirstPage] = useState(false);
-  let { pageNum } = useParams();
+  const router = useRouter();
+  const pageNum = router.query.id || 1;
   const [urlPage, seturlPage] = useState(pageNum);
 
   const handleNextPage = () => {
@@ -179,7 +193,7 @@ const VenuesListing = () => {
     return (
       <div>
         <StyledTitle>
-          <p>Venues Listing</p>
+          <span>Venues Listing</span>
         </StyledTitle>
         <Search searchValue={searchValue} />
         <br></br>
@@ -190,7 +204,7 @@ const VenuesListing = () => {
   } else if (loading) {
     return (
       <div>
-        <p>Loading....</p>
+        <span>Loading....</span>
       </div>
     );
   } else if (showsWrongPage || venues.length === 0) {
@@ -212,17 +226,25 @@ const VenuesListing = () => {
     return (
       <div>
         <StyledTitle>
-          <p>Venues Listing</p>
+          <span>Venues Listing</span>
         </StyledTitle>
         <Search searchValue={searchValue} />
         <div>
           {!showsFirstPage && (
-            <Button className="showlink" onClick={handlePrevPage}>
+            <Button
+              sx={buttonStyle}
+              variant="contained"
+              onClick={handlePrevPage}
+            >
               Previous Page
             </Button>
           )}
           {!showsEOD && (
-            <Button className="showlink" onClick={handleNextPage}>
+            <Button
+              sx={buttonStyle}
+              variant="contained"
+              onClick={handleNextPage}
+            >
               Next Page
             </Button>
           )}
@@ -250,12 +272,20 @@ const VenuesListing = () => {
         </Box>
         <div>
           {!showsFirstPage && (
-            <Button className="showlink" onClick={handlePrevPage}>
+            <Button
+              sx={buttonStyle}
+              variant="contained"
+              onClick={handlePrevPage}
+            >
               Previous Page
             </Button>
           )}
           {!showsEOD && (
-            <Button className="showlink" onClick={handleNextPage}>
+            <Button
+              sx={buttonStyle}
+              variant="contained"
+              onClick={handleNextPage}
+            >
               Next Page
             </Button>
           )}

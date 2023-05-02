@@ -105,3 +105,56 @@ a {
     color-scheme: dark;
   }
 }
+
+.App-header {
+  background-color: #178577;
+  height: 100px;
+  padding: 20px;
+  color: #f8f8f8;
+}
+
+.App-title {
+  font-size: 3em;
+  font-weight: bold;
+  color: #ffcc81;
+  margin-top: 0;
+}
+.App {
+  text-align: center;
+}
+.hometext {
+  max-width: 60%;
+  color: #178577;
+  font-size: 1.2em;
+  line-height: 1.5em;
+}
+
+.showlink {
+  padding: 0.4rem 0.8rem;
+  background-color: #ffcc81;
+  border-radius: 30px;
+  color: #224c39;
+  text-decoration: none !important;
+  margin: 5px;
+  transition: all 0.3s ease;
+}
+
+.showlink:hover {
+  background-color: #178577;
+  color: #f8f8f8;
+  border: 2px solid #f8f8f8;
+}
+
+.buttonStyle {
+  border-bottom: 1px solid #ED1D24;
+  font-weight: bold;
+  font-size: 1.0rem;
+  text-align: center;
+  margin: 10px;
+  background-color: #006ec8;
+  color: #f0f0f0;
+}
+
+.buttonStyle:hover {
+  background-color: #ED1D24;
+}

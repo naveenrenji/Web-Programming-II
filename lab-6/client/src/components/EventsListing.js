@@ -15,7 +15,6 @@ import { Link, useParams } from "react-router-dom";
 import { styled } from "@mui/system";
 import { keyframes } from "@emotion/react";
 import Search from "./Search";
-import noImage from "../img/download.jpeg";
 
 const fadeIn = keyframes`
   from {
@@ -155,7 +154,7 @@ const buildCard = (character) => {
                 objectFit: "cover", // Scale the image appropriately within the fixed height
               }}
               component="img"
-              image={character.image ? character.image : noImage}
+              image={character.image ? character.image : "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png?20210219185637"}
               title={character.name}
             />
             <CardContent
@@ -180,63 +179,6 @@ const buildCard = (character) => {
         </Link>
       </Card>
     </Grid>
-
-    //   // <Card
-    //   //   key={character.id}
-    //   //   variant="outlined"
-    //   //   sx={{
-    //   //     maxWidth: 250,
-    //   //     height: "auto",
-    //   //     marginLeft: "auto",
-    //   //     marginRight: "auto",
-    //   //     borderRadius: 5,
-    //   //     border: "1px solid #ec0d19",
-    //   //     boxShadow:
-    //   //       "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
-    //   //     transition: "transform 0.3s ease-out",
-    //   //     "&:hover": {
-    //   //       transform: "scale(1.03)",
-    //   //       boxShadow: "0 8px 15px rgba(0, 0, 0, 0.3)",
-    //   //       borderColor: "#ec0d19",
-    //   //     },
-    //   //   }}
-    //   // >
-    //   //   <CollectButtons character={character} />
-    //   //   <Link to={`/character/${character.id}`}>
-    //   //   <CardActionArea>
-    //   //       <CardMedia
-    //   //         sx={{
-    //   //           height: 250, // Fixed height for CardMedia
-    //   //           width: "100%",
-    //   //           objectFit: "cover", // Scale the image appropriately within the fixed height
-    //   //         }}
-    //   //         component="img"
-    //   //         image={character.image ? character.image : noImage}
-    //   //         title={character.name}
-    //   //       />
-
-    //   //       <CardContent
-    //   //         sx={{
-    //   //           height: 60, // Fixed height for CardContent
-    //   //         }}
-    //   //       >
-    //   //         <Typography
-    //   //           sx={{
-    //   //             borderBottom: "1px solid #ec0d19",
-    //   //             fontWeight: "bold",
-    //   //             color: "#ec0d19",
-    //   //           }}
-    //   //           gutterBottom
-    //   //           variant="h6"
-    //   //           component="h2"
-    //   //         >
-    //   //           {character.name}
-    //   //         </Typography>
-    //   //       </CardContent>
-    //   //   </CardActionArea>
-    //   //   </Link>
-    //   // </Card>
-    // </Grid>
   );
 };
 

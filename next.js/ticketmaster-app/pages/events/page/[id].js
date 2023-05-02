@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Button,
+  Box,
   Card,
   CardActionArea,
   CardContent,
@@ -9,11 +10,10 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import { Link, useParams } from "react-router-dom";
-import Search from "./Search";
-import noImage from "../img/download.jpeg";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import { styled } from "@mui/system";
-
+import Search from "@/components/Search";
 const APIKEY = "e127Ifc0YAMBpVEonI4wblzsVmDm7LhC";
 
 const StyledTitle = styled("h1")({
@@ -25,10 +25,24 @@ const StyledTitle = styled("h1")({
   textAlign: "center",
 });
 
-const buildCard = (attraction) => {
+const buttonStyle = {
+  borderBottom: "1px solid #ED1D24",
+  fontWeight: "bold",
+  fontSize: "1.0rem",
+  textAlign: "center",
+  margin: "10px",
+  backgroundColor: "#006ec8",
+  color: "#f0f0f0",
+  "&:hover": {
+    backgroundColor: "#ED1D24",
+  },
+};
+
+const buildCard = (event) => {
   return (
-    <Grid item xs={12} sm={4} md={4} lg={3} xl={3} key={attraction.id}>
+    <Grid item xs={12} sm={4} md={4} lg={3} xl={3} key={event.id}>
       <Card
+        key={event.id}
         variant="outlined"
         sx={{
           maxWidth: 250,
@@ -47,8 +61,19 @@ const buildCard = (attraction) => {
           },
         }}
       >
-        <CardActionArea>
-          <Link to={`/attractions/${attraction.id}`}>
+        <Link href={`/events/${event.id}`}>
+          <Box
+            component="div"
+            sx={{
+              cursor: "pointer", // Add cursor:pointer to keep the button-like behavior
+              "&:hover": {
+                // Move the hover styles from Card to this Box
+                transform: "scale(1.03)",
+                boxShadow: "0 8px 15px rgba(0, 0, 0, 0.3)",
+                borderColor: "#ec0d19",
+              },
+            }}
+          >
             <CardMedia
               sx={{
                 height: "100%",
@@ -56,11 +81,11 @@ const buildCard = (attraction) => {
               }}
               component="img"
               image={
-                attraction.images && attraction.images[0].url
-                  ? attraction.images[0].url
-                  : noImage
+                event.images && event.images[0].url
+                  ? event.images[0].url
+                  : "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png?20210219185637"
               }
-              title={attraction.name}
+              title={event.name}
             />
 
             <CardContent>
@@ -68,42 +93,55 @@ const buildCard = (attraction) => {
                 sx={{
                   borderBottom: "1px solid #178577",
                   fontWeight: "bold",
-                  color: "#178577"
+                  color: "#178577",
                 }}
                 gutterBottom
                 variant="h6"
                 component="h2"
               >
-                {attraction.name}
+                {event.name}
               </Typography>
-              {attraction.upcomingEvents &&
-              attraction.upcomingEvents.ticketmaster ? (
+              {event.priceRanges && (
                 <Typography variant="body2" color="textSecondary" component="p">
-                  `{attraction.upcomingEvents.ticketmaster} upcoming events on
-                  Ticketmaster`
+                  ${event.priceRanges[0].min} - ${event.priceRanges[0].max}
+                </Typography>
+              )}
+              {!event.priceRanges && (
+                <Typography variant="body2" color="textSecondary" component="p">
+                  Price Range Not Available
+                </Typography>
+              )}
+              <Typography variant="body2" color="textSecondary" component="p">
+                Start Date - {event.dates.start.localDate}
+              </Typography>
+              {event._embedded && event._embedded.venues ? (
+                <Typography variant="body2" color="textSecondary" component="p">
+                  Venues - {event._embedded.venues[0].name}
                   <br />
+                  {event._embedded.venues[0].city.name}
                 </Typography>
               ) : (
                 <Typography variant="body2" color="textSecondary" component="p">
-                  No upcoming events on Ticketmaster{" "}
+                  Venue Not Available
                 </Typography>
               )}
             </CardContent>
-          </Link>
-        </CardActionArea>
+          </Box>
+        </Link>
       </Card>
     </Grid>
   );
 };
 
-const AttractionsListing = () => {
+const EventsListing = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [attractions, setAttractions] = useState([]);
+  const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showsEOD, setShowsEOD] = useState(false);
   const [showsWrongPage, setShowsWrongPage] = useState(false);
   const [showsFirstPage, setShowsFirstPage] = useState(false);
-  let { pageNum } = useParams();
+  const router = useRouter();
+  const pageNum = router.query.id || 1;
   const [urlPage, seturlPage] = useState(pageNum);
 
   const handleNextPage = () => {
@@ -117,12 +155,12 @@ const AttractionsListing = () => {
     }
   };
 
-  const searchValue = async (value) => {
-    setSearchTerm(value);
-  };
-
   const FirstPage = () => {
     seturlPage(1);
+  };
+
+  const searchValue = async (value) => {
+    setSearchTerm(value);
   };
 
   useEffect(() => {
@@ -131,44 +169,41 @@ const AttractionsListing = () => {
       try {
         console.log(`in fetch searchTerm: ${searchTerm}`);
         const { data } = await axios.get(
-          `https://app.ticketmaster.com/discovery/v2/attractions.json?size=1&apikey=${APIKEY}&keyword=${searchTerm}`
+          `https://app.ticketmaster.com/discovery/v2/events.json?size=1&apikey=${APIKEY}&keyword=${searchTerm}`
         );
-        setAttractions(data._embedded.attractions);
+        setEvents(data._embedded.events);
         setLoading(false);
       } catch (e) {
         console.log(e);
       }
     }
-    if(searchTerm.trim().length>0){
-        fetchData();
+    if (searchTerm.trim().length > 0) {
+      fetchData();
     }
   }, [searchTerm]);
 
   useEffect(() => {
+    console.log(`on load useEffect for page ${urlPage}`);
     setShowsEOD(false);
     setShowsWrongPage(false);
-    const nextURL = `/attractions/page/${urlPage}`;
-    const nextTitle = "Attractions page";
+    const nextURL = `/events/page/${urlPage}`;
+    const nextTitle = "Events page";
     const nextState = { additionalInformation: "Updated the URL with JS" };
     window.history.pushState(nextState, nextTitle, nextURL);
-    const fetchAttractions = async () => {
+    const fetchEvents = async () => {
       try {
-        const nextURL = `/attractions/page/${urlPage}`;
-        const nextTitle = "Attractions page";
-        const nextState = { additionalInformation: "Updated the URL with JS" };
-        window.history.pushState(nextState, nextTitle, nextURL);
         const response = await axios.get(
-          `https://app.ticketmaster.com/discovery/v2/attractions`,
+          `https://app.ticketmaster.com/discovery/v2/events`,
           {
             params: {
               apikey: APIKEY,
               countryCode: "US",
-              page: urlPage-1,
+              page: urlPage - 1,
             },
           }
         );
         setShowsFirstPage(parseInt(urlPage) === 1);
-        setAttractions(response.data._embedded.attractions);
+        setEvents(response.data._embedded.events);
         setLoading(false);
       } catch (e) {
         if (e.code === "ERR_NETWORK") {
@@ -180,13 +215,13 @@ const AttractionsListing = () => {
         }
       }
     };
-    if(urlPage-1===49){
-        fetchAttractions();
-        setShowsEOD(true);
-        setLoading(false);
-      } else {
+    if (urlPage - 1 === 49) {
+      fetchEvents();
+      setShowsEOD(true);
+      setLoading(false);
+    } else {
       if (searchTerm.trim().length === 0) {
-        fetchAttractions();
+        fetchEvents();
       }
     }
   }, [urlPage, searchTerm]);
@@ -195,25 +230,25 @@ const AttractionsListing = () => {
     return (
       <div>
         <StyledTitle>
-          <p>Attractions Listing</p>
+          <span>Events Listing</span>
         </StyledTitle>
         <Search searchValue={searchValue} />
         <br></br>
-        {attractions.map((attraction) => buildCard(attraction))}
+        {events.map((event) => buildCard(event))}
         <br></br>
       </div>
     );
   } else if (loading) {
     return (
       <div>
-        <p>Loading....</p>
+        <span>Loading....</span>
       </div>
     );
-  } else if (showsWrongPage || attractions.length === 0) {
+  } else if (showsWrongPage || events.length === 0) {
     if (!loading) {
       return (
         <div>
-          <h1>404, No Attractions Found!</h1>
+          <h1>404, No Events Found!</h1>
           <br />
           <br />
           <Button className="showlink" onClick={FirstPage}>
@@ -228,34 +263,51 @@ const AttractionsListing = () => {
     return (
       <div>
         <StyledTitle>
-          <p>Attractions Listing</p>
+          <span>Events Listing</span>
         </StyledTitle>
         <Search searchValue={searchValue} />
+        <br></br>
         <div>
           {!showsFirstPage && (
-            <Button className="showlink" onClick={handlePrevPage}>
+            <Button
+              sx={buttonStyle}
+              variant="contained"
+              onClick={handlePrevPage}
+            >
               Previous Page
             </Button>
           )}
           {!showsEOD && (
-            <Button className="showlink" onClick={handleNextPage}>
+            <Button
+              sx={buttonStyle}
+              variant="contained"
+              onClick={handleNextPage}
+            >
               Next Page
             </Button>
           )}
         </div>
         <br></br>
         <Grid container spacing={2}>
-          {attractions.map((attraction) => buildCard(attraction))}
+          {events.map((event) => buildCard(event))}
         </Grid>
         <br></br>
         <div>
           {!showsFirstPage && (
-            <Button className="showlink" onClick={handlePrevPage}>
+            <Button
+              sx={buttonStyle}
+              variant="contained"
+              onClick={handlePrevPage}
+            >
               Previous Page
             </Button>
           )}
           {!showsEOD && (
-            <Button className="showlink" onClick={handleNextPage}>
+            <Button
+              sx={buttonStyle}
+              variant="contained"
+              onClick={handleNextPage}
+            >
               Next Page
             </Button>
           )}
@@ -266,4 +318,4 @@ const AttractionsListing = () => {
   }
 };
 
-export default AttractionsListing;
+export default EventsListing;

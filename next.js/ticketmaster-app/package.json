@@ -1,5 +1,5 @@
 {
-  "name": "lab-4-optional",
+  "name": "ticketmaster-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,9 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.8",
+    "@emotion/styled": "^11.10.8",
+    "@mui/material": "^5.12.2",
+    "@mui/system": "^5.12.1",
+    "axios": "^1.4.0",
     "eslint": "8.39.0",
-    "eslint-config-next": "13.3.2",
-    "next": "13.3.2",
+    "eslint-config-next": "13.3.4",
+    "next": "13.3.4",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   }

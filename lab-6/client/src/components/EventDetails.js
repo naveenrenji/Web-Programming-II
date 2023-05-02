@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { keyframes } from "@emotion/react";
-import noImage from "../img/download.jpeg";
 
 const fadeIn = keyframes`
   from {
@@ -134,7 +133,7 @@ const buildEvent = (characterdata) => {
             boxShadow: "0 5px 5px rgba(0,0,0,0.30), 0 5px 5px rgba(0,0,0,0.22)",
           }}
           component="img"
-          image={characterdata.image ? characterdata.image : noImage}
+          image={characterdata.image ? characterdata.image : "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png?20210219185637"}
           title={characterdata.name}
         />
         <CardContent>

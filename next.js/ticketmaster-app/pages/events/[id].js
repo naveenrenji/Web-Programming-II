@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useRouter } from "next/router";
 import axios from "axios";
 import {
   Button,
@@ -47,7 +47,7 @@ const buildEvent = (eventdata) => {
           boxShadow: "0 5px 5px rgba(0,0,0,0.30), 0 5px 5px rgba(0,0,0,0.22)",
         }}
         component="img"
-        image={eventdata.images[0].url}
+        image={eventdata.images && eventdata.images[0].url ? eventdata.images[0].url : "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png?20210219185637"}
         title={eventdata.name}
       />
       <CardContent>
@@ -123,7 +123,6 @@ const buildEvent = (eventdata) => {
               </>
             )}
           </li>
-          <h3>Venue Details</h3>
           {eventdata._embedded && (
             <>
               <li>
@@ -221,7 +220,8 @@ const EventDetails = () => {
   const [event, setEvent] = useState();
   const [loading, setLoading] = useState(true);
   const [showsWrongPage, setShowsWrongPage] = useState(false);
-  const { id } = useParams();
+  const router = useRouter();
+  const  id  = router.query.id;
 
   useEffect(() => {
     console.log(`on load useEffect for page ${id}`);
@@ -244,7 +244,7 @@ const EventDetails = () => {
   if (loading) {
     return (
       <div>
-        <p>Loading....</p>
+        <span>Loading....</span>
       </div>
     );
   } else if (showsWrongPage || event.length === 0) {
@@ -263,7 +263,7 @@ const EventDetails = () => {
     return (
       <div>
         <StyledTitle>
-          <p>Event Details</p>
+          <span>Event Details</span>
         </StyledTitle>
                 {buildEvent(event)}
         <br></br>

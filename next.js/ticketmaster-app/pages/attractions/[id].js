@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useRouter } from "next/router";
 import axios from "axios";
 import {
   Button,
@@ -68,7 +68,11 @@ const buildAttraction = (attractionData) => {
           boxShadow: "0 5px 5px rgba(0,0,0,0.30), 0 5px 5px rgba(0,0,0,0.22)",
         }}
         component="img"
-        image={attractionData.images[0].url}
+        image={
+          attractionData.images && attractionData.images[0].url
+            ? attractionData.images[0].url
+            : "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png?20210219185637"
+        }
         title={attractionData.name}
       />
       <CardContent>
@@ -244,7 +248,8 @@ const AttractionDetails = () => {
   const [attraction, setAttraction] = useState();
   const [loading, setLoading] = useState(true);
   const [showsWrongPage, setShowsWrongPage] = useState(false);
-  const { id } = useParams();
+  const router = useRouter();
+  const id = router.query.id;
 
   useEffect(() => {
     console.log(`on load useEffect for page ${id}`);
@@ -267,7 +272,7 @@ const AttractionDetails = () => {
   if (loading) {
     return (
       <div>
-        <p>Loading....</p>
+        <span>Loading....</span>
       </div>
     );
   } else if (showsWrongPage || attraction.length === 0) {
@@ -286,7 +291,7 @@ const AttractionDetails = () => {
     return (
       <div>
         <StyledTitle>
-          <p>Attraction Details</p>
+          <span>Attraction Details</span>
         </StyledTitle>
         {buildAttraction(attraction)}
         <br></br>
