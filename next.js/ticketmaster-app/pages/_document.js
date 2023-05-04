@@ -4,7 +4,9 @@ import Link from "next/link";
 export default function Document() {
   return (
     <Html lang="en">
-      <Head title="TicketMaster app"/>
+      <Head>
+        <title> TicketMaster App </title>
+      </Head>
       <body>
         <div className="App">
           <div className="App-header">
